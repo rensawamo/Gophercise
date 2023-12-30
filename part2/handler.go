@@ -1,6 +1,7 @@
 package urlshort
 
 import (
+	"fmt"
 	"net/http"
 
 	yaml "gopkg.in/yaml.v2"
@@ -12,13 +13,18 @@ import (
 // (マップの各キーが指す値、文字列形式) へのマッピングを試みる。
 // マップ内でパスが提供されていない場合、フォールバックとして // http.Handlerが使用。
 // // http.Handler が代わりに呼び出される。
+
+// ★ http.HandlerFunc :  Webサーバの一部として機能してHTTPリクエストなどをこなす
 func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
 		if dest, ok := pathsToUrls[path]; ok {
-			http.Redirect(w, r, dest, http.StatusFound)
+			fmt.Printf("move")
+			http.Redirect(w, r, dest, http.StatusFound) // 存在するパスなら正規のurl に移動
 			return
 		}
+		// パスが 存在しないともとの場所に戻す
+		fmt.Println("fallback:", fallback)
 		fallback.ServeHTTP(w, r)
 	}
 }
@@ -36,6 +42,8 @@ func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.Handl
 //
 // を経由して同様の http.HandlerFunc を作成するには MapHandler を参照。
 // を使います。
+
+// yaml
 func YAMLHandler(yamlBytes []byte, fallback http.Handler) (http.HandlerFunc, error) {
 	pathUrls, err := parseYaml(yamlBytes)
 	if err != nil {
@@ -50,12 +58,15 @@ func buildMap(pathUrls []pathUrl) map[string]string {
 	for _, pu := range pathUrls {
 		pathsToUrls[pu.Path] = pu.URL
 	}
+	fmt.Println("rowMaps:", pathsToUrls)
 	return pathsToUrls
 }
 
 func parseYaml(data []byte) ([]pathUrl, error) {
 	var pathUrls []pathUrl
 	err := yaml.Unmarshal(data, &pathUrls)
+	fmt.Println(pathUrls)
+	// [{/part2 github.com/rensawamo/Gophercise/urlshort} {/urlshort-final github.com/rensawamo/Gophercise/urlshort/tree/main}] 写像
 	if err != nil {
 		return nil, err
 	}
@@ -63,6 +74,6 @@ func parseYaml(data []byte) ([]pathUrl, error) {
 }
 
 type pathUrl struct {
-	Path string `yaml:"path"`
+	Path string `yaml:"path"` // Unmarshal してるときは構造対に型指定がはいる
 	URL  string `yaml:"url"`
 }
