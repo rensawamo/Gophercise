@@ -11,6 +11,7 @@ func main() {
 	mux := defaultMux()
 
 	// Build the MapHandler using the mux as the fallback
+	//リダイレクト先を指定
 	pathsToUrls := map[string]string{
 		"/urlshort-godoc": "github.com/rensawamo/Gophercise/urlshort",
 		"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
