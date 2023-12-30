@@ -6,12 +6,12 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-// MapHandler will return an http.HandlerFunc (which also
-// implements http.Handler) that will attempt to map any
-// paths (keys in the map) to their corresponding URL (values
-// that each key in the map points to, in string format).
-// If the path is not provided in the map, then the fallback
-// http.Handler will be called instead.
+// MapHandlerはhttp.HandlerFuncを返す。
+// // を実装している) を返す。
+// // パス (マップのキー) を対応する URL (マップの各キーが指す値、文字列形式) に マップしようとする。
+// (マップの各キーが指す値、文字列形式) へのマッピングを試みる。
+// マップ内でパスが提供されていない場合、フォールバックとして // http.Handlerが使用。
+// // http.Handler が代わりに呼び出される。
 func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
@@ -23,22 +23,19 @@ func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.Handl
 	}
 }
 
-// YAMLHandler will parse the provided YAML and then return
-// an http.HandlerFunc (which also implements http.Handler)
-// that will attempt to map any paths to their corresponding
-// URL. If the path is not provided in the YAML, then the
-// fallback http.Handler will be called instead.
-//
-// YAML is expected to be in the format:
-//
-//   - path: /some-path
+// YAMLHandler は指定された YAML をパースして
+// を返す。
+// を返す。
+// URL にマップする。パスがYAMLで提供されない場合
+// フォールバックのhttp.Handlerが代わりに呼び出される。
+
+// YAMLは次のフォーマットであることが期待される：
+
+//   - パス： パス: /some-path
 //     url: https://www.some-url.com/demo
 //
-// The only errors that can be returned all related to having
-// invalid YAML data.
-//
-// See MapHandler to create a similar http.HandlerFunc via
-// a mapping of paths to urls.
+// を経由して同様の http.HandlerFunc を作成するには MapHandler を参照。
+// を使います。
 func YAMLHandler(yamlBytes []byte, fallback http.Handler) (http.HandlerFunc, error) {
 	pathUrls, err := parseYaml(yamlBytes)
 	if err != nil {
