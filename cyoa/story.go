@@ -102,7 +102,6 @@ func WithPathFunc(fn func(r *http.Request) string) HandlerOption {
 }
 
 // ... で Handelerをいじる関数を複数個   引数にうけとることが可能
-
 func NewHandler(s Story, opts ...HandlerOption) http.Handler {
 	h := handler{s, tpl, defaultPathFn}
 	for _, opt := range opts {

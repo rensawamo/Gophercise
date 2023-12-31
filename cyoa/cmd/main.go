@@ -41,7 +41,6 @@ func main() {
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), mux))
 }
 
-
 // デフォルトのパスなら intro チャプタに移動させる
 func pathFn(r *http.Request) string {
 	// ユーザが入力してきたパス
