@@ -21,12 +21,12 @@ const (
 
 var suits = [...]Suit{Spade, Diamond, Club, Heart} // [...]で初期値によって配列のサイズが決定
 
-type Rank uint8  
+type Rank uint8
 
 const (
 	_ Rank = iota // 定数内自動インクリメント 0を無視
 	// この定義の仕方で const Two Rank = 2 の値が割り振られる  = for 分も回せる
-	Ace 
+	Ace
 	Two
 	Three
 	Four
@@ -47,8 +47,8 @@ const (
 )
 
 type Card struct {
-	Suit  // 柄
-	Rank  // ランク
+	Suit // 柄
+	Rank // ランク
 }
 
 func (c Card) String() string {
@@ -64,12 +64,14 @@ func New(opts ...func([]Card) []Card) []Card {
 	var cards []Card
 	for _, suit := range suits {
 		for rank := minRank; rank <= maxRank; rank++ {
-			fmt.Println("rank",rank)
+			fmt.Println("rank", rank)
 			cards = append(cards, Card{Suit: suit, Rank: rank})
 		}
-	} 
-	fmt.Println("cards",cards)
+	}
+	fmt.Println("cards", cards)
 	// 可変長が 0のときは動かない
+
+	// fiter などの特別の設定をくわえたいときなどに こちらの optでが動くｙほうにしたいから funcを可変長引数でうけとっている
 	for _, opt := range opts {
 		cards = opt(cards)
 	}
@@ -77,7 +79,7 @@ func New(opts ...func([]Card) []Card) []Card {
 }
 
 func DefaultSort(cards []Card) []Card {
-	fmt.Println("引数何",cards)
+	fmt.Println("引数何", cards)
 	// sort.Slice(ソート対象、how)
 	sort.Slice(cards, Less(cards)) // less func(i int, j int) bool が必要
 	return cards
@@ -101,11 +103,15 @@ func absRank(c Card) int {
 	return int(c.Suit)*int(maxRank) + int(c.Rank)
 }
 
+// 毎回違う数列をつくるために 時間という概念をつかって作成
 var shuffleRand = rand.New(rand.NewSource(time.Now().Unix()))
 
 func Shuffle(cards []Card) []Card {
 	ret := make([]Card, len(cards))
+
 	perm := shuffleRand.Perm(len(cards))
+	// 毎回len がおなじの内容が異なる数列randam で作成するイメージ
+	fmt.Println("perm", perm)
 	for i, j := range perm {
 		ret[i] = cards[j]
 	}
@@ -120,6 +126,7 @@ func Jokers(n int) func([]Card) []Card {
 				Suit: Joker,
 			})
 		}
+		fmt.Println("クロージャの引数は var になりうるか", cards)
 		return cards
 	}
 }

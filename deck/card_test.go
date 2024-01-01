@@ -76,9 +76,9 @@ func TestFilter(t *testing.T) {
 	filter := func(card Card) bool {
 		return card.Rank == Two || card.Rank == Three
 	}
-	cards := New(Filter(filter))
+	cards := New(Filter(filter)) // 2 か ３ 以外の許可
 	for _, c := range cards {
-		if c.Rank == Two || c.Rank == Three {
+		if c.Rank == Two || c.Rank == Three {  // filterしきれていないときに errorを吐き出す
 			t.Error("Expected all twos and threes to be filtered out.")
 		}
 	}
