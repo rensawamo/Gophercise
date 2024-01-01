@@ -10,7 +10,7 @@ import (
 	"github.com/boltdb/bolt"
 )
 
-var taskBucket = []byte("tasks")
+var taskBucket = []byte("tasks") // backtは DBの容器みたいなもの
 var db *bolt.DB
 
 type Task struct {
@@ -40,7 +40,7 @@ func CreateTask(task string) (int, error) {
 		id64, _ := b.NextSequence()
 		id = int(id64)
 		key := itob(id)
-		return b.Put(key, []byte(task))
+		return b.Put(key, []byte(task)) // タスクバケットに byte列で書き込む  intもbyteになおして
 	})
 	if err != nil {
 		return -1, err
