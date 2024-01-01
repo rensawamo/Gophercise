@@ -20,7 +20,7 @@ func main() {
 	// ファイルから一行読み込む
 	scanner := bufio.NewScanner(file)
 	var input string
-	// for scanで全行読む  /ｎいれると大文字のカウントが 水増しされる
+	// for scanで全行読む  /ｎいれると大文字のカウントが 水増しされる(プラス２)
 	for scanner.Scan() {
 		input += scanner.Text() // 読み込んだ各行を結合
 	}
