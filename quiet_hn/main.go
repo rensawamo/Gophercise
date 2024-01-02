@@ -56,7 +56,7 @@ var (
 )
 
 
-// ほしい数だけでデータをとってくる
+// キャッシュデータ取得
 func getCachedStories(numStories int) ([]item, error) {
 	cacheMutex.Lock()
 	defer cacheMutex.Unlock()
