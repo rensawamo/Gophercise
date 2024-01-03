@@ -26,9 +26,13 @@ func main() {
 	log.Fatal(http.ListenAndServe(":3000", devMw(mux)))
 }
 
+
+// パスを受けってコードをブラウザで表示させるその際に chromaで デザインや プログラミング言語を指定して 出力
 func sourceCodeHandler(w http.ResponseWriter, r *http.Request) {
 	// http://localhost:3000/debug/?line=2009&path=%2Fusr%2Flib%2Fgo-1.21%2Fsrc%2Fnet%2Fhttp%2Fserver.go
 	// 上記の   line のとこをとる
+
+	// chomeはデザイン
 	path := r.FormValue("path")
 	lineStr := r.FormValue("line")
 	fmt.Println("linestr",lineStr)
@@ -53,15 +57,19 @@ func sourceCodeHandler(w http.ResponseWriter, r *http.Request) {
 	if line > 0 {
 		lines = append(lines, [2]int{line, line})
 	}
-	lexer := lexers.Get("go")
-	iterator, err := lexer.Tokenise(nil, b.String())
-	style := styles.Get("github")
+	// lines [[78 78]]
+	fmt.Println("lines",lines)
+	lexer := lexers.Get("Go") //Go のソースコード 指定 
+	iterator, _ := lexer.Tokenise(nil, b.String())
+	fmt.Println("iterator",iterator)
+	style := styles.Get("github") //github風のテキストで出力
 	if style == nil {
 		style = styles.Fallback
 	}
+	// html の contentの設定からいじれる
 	formatter := html.New(html.TabWidth(2), html.WithLineNumbers(true), html.LineNumbersInTable(true), html.HighlightLines(lines))
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, "<style>pre { font-size: 1.2em; }</style>")
+	fmt.Fprint(w, "<style>pre { font-size: 4.2em; }</style>")
 	formatter.Format(w, style, iterator)
 	// _ = quick.Highlight(w, b.String(), "go", "html", "github")
 }
