@@ -11,7 +11,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
-
 	"github.com/rensawamo/image-transform/primitive"
 )
 
@@ -45,11 +44,11 @@ func main() {
 		}
 		defer f.Close()
 		ext := filepath.Ext(f.Name())[1:]
-		fmt.Println(ext)
+		fmt.Println("ext", ext) // 拡張子の取得
+
 		modeStr := r.FormValue("mode")
 		if modeStr == "" {
 			renderModeChoices(w, r, f, ext)
-			return
 		}
 		mode, err := strconv.Atoi(modeStr)
 		if err != nil {
@@ -67,7 +66,6 @@ func main() {
 			return
 		}
 		_ = numShapes
-		fmt.Println("isopen")
 		http.Redirect(w, r, "/img/"+filepath.Base(f.Name()), http.StatusFound)
 	})
 	mux.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +95,7 @@ func main() {
 	// シンボリックリンクをたどる
 	fs := http.FileServer(http.Dir("./img/"))
 	mux.Handle("/img/", http.StripPrefix("/img", fs))
-	log.Fatal(http.ListenAndServe(":3000", mux))
+	log.Fatal(http.ListenAndServe(":3001", mux))
 }
 
 func renderNumShapeChoices(w http.ResponseWriter, r *http.Request, rs io.ReadSeeker, ext string, mode primitive.Mode) {
@@ -186,7 +184,7 @@ type genOpts struct {
 func genImages(rs io.ReadSeeker, ext string, opts ...genOpts) ([]string, error) {
 	var ret []string
 	for _, opt := range opts {
-		rs.Seek(0, 0)
+		rs.Seek(0, 0) // .imageの一番初めのファイルにポインタをうつ
 		f, err := genImage(rs, ext, opt.N, opt.M)
 		if err != nil {
 			return nil, err

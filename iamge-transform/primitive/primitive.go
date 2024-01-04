@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
+	_ "io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
@@ -83,11 +83,17 @@ func primitive(inputFile, outputFile string, numShapes int, args ...string) (str
 	args = append(strings.Fields(argStr), args...)
 	cmd := exec.Command("primitive", args...)
 	b, err := cmd.CombinedOutput()
-	return string(b), err
+	fmt.Println("sdd", b)
+	if err != nil {
+		return "", fmt.Errorf("primitive: failed to run the primitive command: %v, output: %s", err, b)
+	}
+
+	return string(b), nil
+
 }
 
 func tempfile(prefix, ext string) (*os.File, error) {
-	in, err := ioutil.TempFile("", prefix)
+	in, err := os.CreateTemp("", prefix)
 	if err != nil {
 		return nil, errors.New("primitive: failed to create temporary file")
 	}
