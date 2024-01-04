@@ -1,18 +1,8 @@
-# Binaries for programs and plugins
-*.exe
-*.dll
-*.so
-*.dylib
+#  要約
+暗号化通信を用いて 自分のホームディレクトリの シークレットファイルにキーとバリューを格納
 
-# Test binary, build with `go test -c`
-*.test
 
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-# Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
-.glide/
-
-tmp/*
-.keys.json
-.secrets
+# 得られた知見
+1 . ファイル構成の整理 cmdの作成ディレクトリと 暗号化に特化したファイルと それらを管理する構造体
+2 . cipherをの 16ビット文字を用いた暗号化とその解読
+3 .  ホームディレクトリのポスを取得する関数の使い方
